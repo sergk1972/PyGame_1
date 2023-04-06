@@ -8,6 +8,7 @@ screen = wigth, heigth = 801, 600
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 RED = 255, 0, 0
+GREEN = 0, 255, 0
 main_surface = pygame.display.set_mode(screen)
 pygame.display.set_caption("SUPER BALL")
 ball = pygame.Surface((20, 20))
@@ -28,6 +29,19 @@ CREATE_ENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(CREATE_ENEMY, 1500)
 enemies = []
 
+
+def create_bonus():
+    bonus = pygame.Surface((20, 20))
+    bonus.fill(GREEN)
+    bonus_rect = pygame.Rect(randint(0, wigth), 0, *bonus.get_size())
+    bonus_speed = randint(1, 3)
+    return [bonus, bonus_rect, bonus_speed]
+
+
+CREATE_BONUS = pygame.USEREVENT + 1
+
+bonuses = []
+
 is_working = True
 while is_working:
     FPS.tick(60)
@@ -36,6 +50,9 @@ while is_working:
             is_working = False
         if event.type == CREATE_ENEMY:
             enemies.append(create_enemy())
+        if event.type == CREATE_BONUS:
+            if len(bonuses) == 0:
+                bonuses.append(create_bonus())
     pressed_keys = pygame.key.get_pressed()
 
     main_surface.fill(BLACK)
@@ -47,6 +64,14 @@ while is_working:
             enemies.pop(enemies.index(enemy))
         if ball_rect.colliderect(enemy[1]):
             enemies.pop(enemies.index(enemy))
+    for bonus in bonuses:
+        main_surface.blit(bonus[0], bonus[1])
+        bonus[1] = bonus[1].move(0, bonus[2])
+        if bonus[1].bottom > heigth:
+            bonuses.pop(bonuses.index(bonus))
+        if ball_rect.colliderect(bonus[1]):
+            bonuses.pop(bonuses.index(bonus))
+
     if pressed_keys[K_DOWN] and not ball_rect.bottom >= heigth:
         ball_rect = ball_rect.move(0, ball_speed)
     if pressed_keys[K_UP] and not ball_rect.top <= 0:
