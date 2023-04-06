@@ -39,6 +39,7 @@ def create_bonus():
 
 
 CREATE_BONUS = pygame.USEREVENT + 1
+# pygame.time.set_timer(CREATE_BONUS, 3000)
 
 bonuses = []
 
