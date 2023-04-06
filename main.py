@@ -11,9 +11,11 @@ RED = 255, 0, 0
 GREEN = 0, 255, 0
 main_surface = pygame.display.set_mode(screen)
 pygame.display.set_caption("SUPER BALL")
-ball = pygame.Surface((20, 20))
-ball.fill(WHITE)
-ball_rect = ball.get_rect()
+# ball = pygame.Surface((20, 20))
+# ball.fill(WHITE)
+ball = pygame.image.load('images/ball_white.png')
+# ball.get_rect()
+ball_rect = pygame.Rect(100, 300, 70, 70)
 ball_speed = 4
 
 
@@ -39,7 +41,7 @@ def create_bonus():
 
 
 CREATE_BONUS = pygame.USEREVENT + 1
-# pygame.time.set_timer(CREATE_BONUS, 3000)
+pygame.time.set_timer(CREATE_BONUS, 3000)
 
 bonuses = []
 
@@ -52,8 +54,8 @@ while is_working:
         if event.type == CREATE_ENEMY:
             enemies.append(create_enemy())
         if event.type == CREATE_BONUS:
-            if len(bonuses) == 0:
-                bonuses.append(create_bonus())
+            # if len(bonuses) == 0:
+            bonuses.append(create_bonus())
     pressed_keys = pygame.key.get_pressed()
 
     main_surface.fill(BLACK)
