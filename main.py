@@ -1,34 +1,59 @@
 import pygame
-from pygame.constants import QUIT
+from pygame.constants import QUIT, K_DOWN, K_UP, K_RIGHT, K_LEFT
 from random import randint
 
 pygame.init()
+FPS = pygame.time.Clock()
 screen = wigth, heigth = 801, 600
+BLACK = 0, 0, 0
+WHITE = 255, 255, 255
+RED = 255, 0, 0
 main_surface = pygame.display.set_mode(screen)
 pygame.display.set_caption("SUPER BALL")
-# ball = pygame.Surface((20, 20))
-ball_color = ['images/ball_white.png', 'images/ball_black.png', 'images/ball_yellow.png',
-              'images/ball_red.png', 'images/ball_green.png', 'images/ball.png']
-ball = pygame.image.load('images/ball.png')
-# ball_color = [(0, 0, 0), (255, 255, 255), (0, 0, 255),
-#              (0, 255, 0), (255, 25, 25), (255, 255, 51)]
-# ball.fill((255, 255, 255))
+ball = pygame.Surface((20, 20))
+ball.fill(WHITE)
 ball_rect = ball.get_rect()
-ball_speed = [1, 1]
+ball_speed = 4
+
+
+def create_enemy():
+    enemy = pygame.Surface((20, 20))
+    enemy.fill(RED)
+    enemy_rect = pygame.Rect(wigth, randint(0, heigth), *enemy.get_size())
+    enemy_speed = randint(2, 5)
+    return [enemy, enemy_rect, enemy_speed]
+
+
+CREATE_ENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(CREATE_ENEMY, 1500)
+enemies = []
+
 is_working = True
 while is_working:
+    FPS.tick(60)
     for event in pygame.event.get():
         if event.type == QUIT:
             is_working = False
-    ball_rect = ball_rect.move(ball_speed)
-    if ball_rect.bottom >= heigth or ball_rect.top <= 0:  # отскок от края поля
-        ball_speed[1] = - ball_speed[1]
-        ball = pygame.image.load(ball_color[randint(0, 5)])
-        # ball.fill(ball_color[randint(0, 5)])  # изменение цвета объекта
-    elif ball_rect.right >= wigth or ball_rect.left <= 0:
-        ball_speed[0] = - ball_speed[0]
-        ball = pygame.image.load(ball_color[randint(0, 5)])
-        # ball.fill(ball_color[randint(0, 5)])
-    main_surface.fill((100, 100, 100))
+        if event.type == CREATE_ENEMY:
+            enemies.append(create_enemy())
+    pressed_keys = pygame.key.get_pressed()
+
+    main_surface.fill(BLACK)
     main_surface.blit(ball, ball_rect)
+    for enemy in enemies:
+        main_surface.blit(enemy[0], enemy[1])
+        enemy[1] = enemy[1].move(-enemy[2], 0)
+        if enemy[1].left < 0:
+            enemies.pop(enemies.index(enemy))
+        if ball_rect.colliderect(enemy[1]):
+            enemies.pop(enemies.index(enemy))
+    if pressed_keys[K_DOWN] and not ball_rect.bottom >= heigth:
+        ball_rect = ball_rect.move(0, ball_speed)
+    if pressed_keys[K_UP] and not ball_rect.top <= 0:
+        ball_rect = ball_rect.move(0, -ball_speed)
+    if pressed_keys[K_RIGHT] and not ball_rect.right >= wigth:
+        ball_rect = ball_rect.move(ball_speed, 0)
+    if pressed_keys[K_LEFT] and not ball_rect.left <= 0:
+        ball_rect = ball_rect.move(-ball_speed, 0)
+
     pygame.display.flip()
