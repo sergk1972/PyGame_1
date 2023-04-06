@@ -17,8 +17,9 @@ pygame.display.set_caption("SUPER BALL")
 # ball = pygame.Surface((20, 20))
 # ball.fill(WHITE)
 IMGS_PATH = 'images/goose'
-ball_imgs = [ball = pygame.image.load(IMGS_PATH + '/' + file).convert_alpha() for file in listdir(IMGS_PATH)]
-
+ball_imgs = [pygame.image.load(
+    IMGS_PATH + '/' + file).convert_alpha() for file in listdir(IMGS_PATH)]
+ball = ball_imgs[0]
 ball_rect = pygame.Rect(ball.get_rect())
 ball_speed = 4
 
@@ -38,13 +39,6 @@ def create_enemy():
     return [enemy, enemy_rect, enemy_speed]
 
 
-CREATE_ENEMY = pygame.USEREVENT + 1
-pygame.time.set_timer(CREATE_ENEMY, 1500)
-enemies = []
-bonuses = []
-scores = 0
-
-
 def create_bonus():
     # bonus = pygame.Surface((20, 20))
     # bonus.fill(GREEN)
@@ -54,8 +48,19 @@ def create_bonus():
     return [bonus, bonus_rect, bonus_speed]
 
 
-CREATE_BONUS = pygame.USEREVENT + 1
+CREATE_ENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(CREATE_ENEMY, 1500)
+
+CREATE_BONUS = pygame.USEREVENT + 2
 pygame.time.set_timer(CREATE_BONUS, 3000)
+
+CHANGE_IMG = pygame.USEREVENT + 3
+pygame.time.set_timer(CHANGE_IMG, 125)
+
+enemies = []
+bonuses = []
+scores = 0
+img_index = 0
 
 is_working = True
 while is_working:
@@ -68,6 +73,12 @@ while is_working:
         if event.type == CREATE_BONUS:
             # if len(bonuses) == 0:
             bonuses.append(create_bonus())
+        if event.type == CHANGE_IMG:
+            img_index += 1
+            if img_index == len(ball_imgs):
+                img_index = 0
+            ball = ball_imgs[img_index]
+
     pressed_keys = pygame.key.get_pressed()
 
     # main_surface.fill(BLACK)
