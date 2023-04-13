@@ -1,7 +1,9 @@
 import pygame
-from pygame.constants import QUIT, K_DOWN, K_UP, K_RIGHT, K_LEFT
+from pygame.constants import QUIT, K_DOWN, K_UP, K_RIGHT, K_LEFT, K_SPACE
 from random import randint
 from os import listdir
+import sys
+
 
 pygame.init()
 FPS = pygame.time.Clock()
@@ -10,7 +12,7 @@ BLACK = 0, 0, 0
 WHITE = 255, 255, 255
 RED = 255, 0, 0
 GREEN = 0, 255, 0
-font = pygame.font.SysFont('Helvetica', 20)
+font = pygame.font.SysFont('Helvetica', 20, True)
 
 main_surface = pygame.display.set_mode(screen)
 pygame.display.set_caption("SUPER BALL")
@@ -38,9 +40,31 @@ def create_enemy():
 
 def create_bonus():
     bonus = pygame.image.load('images/bonus.png').convert_alpha()
-    bonus_rect = pygame.Rect(randint(100, wigth-100), 0, *bonus.get_size())
+    bonus_rect = pygame.Rect(
+        randint(100, wigth-100), -150, *bonus.get_size())
     bonus_speed = randint(1, 3)
     return [bonus, bonus_rect, bonus_speed]
+
+
+def game_over():
+    while True:
+        FPS.tick(60)
+        main_surface = pygame.display.set_mode((800, 600))
+        g_over = pygame.image.load('images/GAME OVER.png').convert_alpha()
+        g_over_rect = g_over.get_rect()  # pygame.Rect(150, 250, *g_over.get_size())
+        main_surface_rect = main_surface.get_rect()
+        g_over_rect.centerx = main_surface_rect.centerx
+        g_over_rect.centery = main_surface_rect.centery
+        main_surface.fill(BLACK)
+        main_surface.blit(font.render(
+            'YOUR SCORE:' + str(scores), True, GREEN), (150, 200))
+        main_surface.blit(g_over, g_over_rect)
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                sys.exit()
+
+        pygame.display.flip()
 
 
 CREATE_ENEMY = pygame.USEREVENT + 1
@@ -96,7 +120,9 @@ while is_working:
         if enemy[1].left < 0:
             enemies.pop(enemies.index(enemy))
         if ball_rect.colliderect(enemy[1]):
-            is_working = False
+            # is_working = False
+            game_over()
+
     for bonus in bonuses:
         main_surface.blit(bonus[0], bonus[1])
         bonus[1] = bonus[1].move(0, bonus[2])
