@@ -18,6 +18,7 @@ RED = 255, 0, 0
 GREEN = 0, 255, 0
 BLUE = 0, 0, 255
 font = pygame.font.SysFont('Helvetica', 20, True)
+font_big = pygame.font.SysFont('Helvetica', 25, True)
 
 main_surface = pygame.display.set_mode(screen)
 pygame.display.set_caption("SUPER GOOSE (Супер гусь)")
@@ -156,8 +157,8 @@ def game_over():
         main_surface.blit(font.render('PLAYER : SCORE',
                           True, RED), (350, 380))
         if fl == True:
-            main_surface.blit(font.render(
-                'HALL    OF    FAME', True, BLACK), (340, 360))
+            main_surface.blit(font_big.render(
+                'HALL    OF    FAME', True, BLACK), (320, 360))
             for n, m in score_table:
                 main_surface.blit(font.render(
                     n.upper(), True, RED), (350, step))
