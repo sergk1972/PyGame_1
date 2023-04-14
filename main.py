@@ -141,7 +141,7 @@ def start_game():
 def game_over():
     sql_insert_one(db, name, scores)
     score_table = sql_fetch(db)
-    step = 400
+    step = 410
     fl = True
     while True:
         FPS.tick(60)
@@ -154,8 +154,8 @@ def game_over():
         # main_surface.fill(GREEN)
         pygame.draw.rect(main_surface, BLUE, (1, 1,
                          main_surface_rect.right-2, main_surface_rect.bottom-2), 5)
-        main_surface.blit(font.render('PLAYER : SCORE',
-                          True, RED), (350, 380))
+        main_surface.blit(font.render('PLAYER   : SCORE',
+                          True, BLACK), (348, 385))
         if fl == True:
             main_surface.blit(font_big.render(
                 'HALL    OF    FAME', True, BLACK), (320, 360))
