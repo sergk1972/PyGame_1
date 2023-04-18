@@ -1,12 +1,12 @@
-import sqlite3
-from sqlite3 import Error
+# import sqlite3
+# from sqlite3 import Error
 import pygame
 import pygame_textinput
 from pygame.constants import QUIT, K_DOWN, K_UP, K_RIGHT, K_LEFT, KEYDOWN, K_RETURN
 from random import randint
 from os import listdir
 import sys
-# from sqlitefunc import SqliteActions
+from sqlitefunc import SqliteActions
 
 
 pygame.init()
@@ -36,54 +36,6 @@ bgx2 = bg.get_width()
 bg_speed = 2
 
 
-def sql_connection():  # db_file  creating and establishing connection
-    try:
-        db = sqlite3.connect('database.db')
-        return db
-    except Error as ex:
-        print(ex)
-
-
-def sql_table_create(db):  # database table creating
-    try:
-        cursor_sql = db.cursor()
-        cursor_sql.execute(f"CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-                           f"name TEXT DEFAULT 'empty_space', score INTEGER DEFAULT 'empty_space') ")
-        db.commit()
-    except Error as ex:
-        print(ex)
-
-
-def sql_table_delete(db):  # database table creating
-    try:
-        cursor_sql = db.cursor()
-        cursor_sql.execute(f"DROP table if exists players")
-        db.commit()
-    except Error as ex:
-        print(ex)
-
-
-def sql_insert_one(db, name, score):
-    try:
-        cursor_sql = db.cursor()
-        cursor_sql.execute(
-            f'INSERT INTO players(name, score) VALUES(?, ?)', (name, score))
-        db.commit()
-    except Error as ex:
-        print(ex)
-
-
-def sql_fetch(db):  # show data
-    try:
-        cursor_sql = db.cursor()
-        cursor_sql.execute(
-            f'SELECT name, score FROM players ORDER BY score DESC LIMIT 8')
-        data = cursor_sql.fetchall()
-        return data
-    except Error as ex:
-        print(ex)
-
-
 def create_enemy():
     enemy = pygame.image.load('images/enemy.png').convert_alpha()
     enemy_rect = pygame.Rect(wigth, randint(
@@ -100,8 +52,9 @@ def create_bonus():
     return [bonus, bonus_rect, bonus_speed]
 
 
-db = sql_connection()
-sql_table_create(db)
+db = SqliteActions()
+db.sql_connection()
+db.sql_table_create()
 
 
 def start_game():
@@ -139,8 +92,8 @@ def start_game():
 
 
 def game_over():
-    sql_insert_one(db, name, scores)
-    score_table = sql_fetch(db)
+    db.sql_insert_one(name, scores)
+    score_table = db.sql_fetch()
     step = 410
     fl = True
     while True:

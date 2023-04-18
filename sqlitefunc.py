@@ -9,6 +9,9 @@ class SqliteActions:
         self.data = None
         self.db = None
 
+    def close(self):
+        self.db.close()
+
     def sql_connection(self):  # db_file  creating and establishing connection
         try:
             self.db = sqlite3.connect('database.db')
@@ -69,7 +72,8 @@ class SqliteActions:
     def sql_fetch(self):  # show data
         try:
             cursor_sql = self.db.cursor()
-            cursor_sql.execute(f'SELECT name, score FROM players')
+            cursor_sql.execute(
+                f'SELECT name, score FROM players ORDER BY score DESC LIMIT 8')
             data = cursor_sql.fetchall()
             return data
         except Error as ex:
