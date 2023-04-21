@@ -1,5 +1,3 @@
-# import sqlite3
-# from sqlite3 import Error
 import pygame
 import pygame_textinput
 from pygame.constants import QUIT, K_DOWN, K_UP, K_RIGHT, K_LEFT, KEYDOWN, K_RETURN
